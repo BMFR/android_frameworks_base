@@ -63,8 +63,12 @@ import com.android.systemui.statusbar.policy.UserInfoController;
  * The view to manage the header area in the expanded status bar.
  */
 public class StatusBarHeaderView extends RelativeLayout implements View.OnClickListener,
-        View.OnLongClickListener, BatteryController.BatteryStateChangeCallback, NextAlarmController.NextAlarmChangeCallback,
-        WeatherController.Callback {
+        View.OnLongClickListener, BatteryController.BatteryStateChangeCallback,
+        NextAlarmController.NextAlarmChangeCallback {
+
+    private static final int STATUS_BAR_POWER_MENU_OFF = 0;
+    private static final int STATUS_BAR_POWER_MENU_DEFAULT = 1;
+    private static final int STATUS_BAR_POWER_MENU_INVERTED = 2;
 
     private boolean mBatteryCharging;
     private boolean mExpanded;
@@ -153,7 +157,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
 
     private void loadShowBatteryTextSetting() {
         ContentResolver resolver = getContext().getContentResolver();
-        mShowBatteryText = 0 != Settings.System.getInt(resolver,
+        mShowBatteryText = Settings.System.getInt(resolver,
                 Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 0);
     }
 
@@ -605,9 +609,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     private void statusBarPowerMenuAction() {
-        if (mStatusBarPowerMenuStyle == 1) {
+        if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_DEFAULT) {
             goToSleep();
-        } else if (mStatusBarPowerMenuStyle == 2) {
+        } else if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_INVERTED) {
             triggerPowerMenuDialog();
         }
     }
@@ -941,9 +945,9 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     @Override
     public boolean onLongClick(View v) {
         if (v == mStatusBarPowerMenu) {
-            if (mStatusBarPowerMenuStyle == 1) {
+            if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_DEFAULT) {
                 triggerPowerMenuDialog();
-            } else if (mStatusBarPowerMenuStyle == 2) {
+            } else if (mStatusBarPowerMenuStyle == STATUS_BAR_POWER_MENU_INVERTED) {
                 goToSleep();
             }
         }
